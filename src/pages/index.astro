@@ -1,25 +1,21 @@
 ---
 import { getCollection } from 'astro:content';
-// Component Imports
+import BaseLayout from '../layouts/BaseLayout.astro';
 import CallToAction from '../components/CallToAction.astro';
-// Page section components
 import ContactCTA from '../components/ContactCTA.astro';
 import Grid from '../components/Grid.astro';
 import Hero from '../components/Hero.astro';
 import Icon from '../components/Icon.astro';
 import Pill from '../components/Pill.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
-import Skills from '../components/Skills.astro';
-// Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
-import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Content Fetching: List four most recent work projects
 const projects = (await getCollection('work'))
 	.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
 	.slice(0, 4);
 
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
+	.slice(0, 3);
 ---
 
 <BaseLayout>
@@ -27,33 +23,31 @@ const projects = (await getCollection('work'))
 		<div class="wrapper stack gap-8 lg:gap-20">
 			<header class="hero">
 				<Hero
-					title="Hello, my name is Jeanine White"
-					tagline="I am a Creative Developer who is currently based in Portland, Oregon."
+					title="안녕하세요, 디자이너입니다"
+					tagline="차분하고 자연 친화적인 디자인으로 브랜드의 가치를 전달합니다. UI/UX 디자인과 브랜딩을 중심으로 작업합니다."
 					align="start"
 				>
 					<div class="roles">
-						<Pill><Icon icon="code" size="1.33em" /> Developer</Pill>
-						<Pill><Icon icon="microphone-stage" size="1.33em" /> Speaker</Pill>
-						<Pill><Icon icon="pencil-line" size="1.33em" /> Writer</Pill>
+						<Pill><Icon icon="pencil-line" size="1.33em" /> UI/UX Design</Pill>
+						<Pill><Icon icon="star" size="1.33em" /> Branding</Pill>
+						<Pill><Icon icon="code" size="1.33em" /> Web Design</Pill>
 					</div>
 				</Hero>
 
 				<img
-					alt="Jeanine White smiling in a red plaid shirt and tortoise shell glasses"
+					alt="디자이너 프로필"
 					width="480"
 					height="620"
 					src="/assets/portrait.jpg"
 				/>
 			</header>
-
-			<Skills />
 		</div>
 
 		<main class="wrapper stack gap-20 lg:gap-48">
 			<section class="section with-background with-cta">
 				<header class="section-header stack gap-2 lg:gap-4">
 					<h3>Selected Work</h3>
-					<p>Take a look below at some of my featured work for clients from the past few years.</p>
+					<p>최근 작업한 프로젝트들을 확인해보세요.</p>
 				</header>
 
 				<div class="gallery">
@@ -70,7 +64,7 @@ const projects = (await getCollection('work'))
 
 				<div class="cta">
 					<CallToAction href="/work/">
-						View All
+						View All Projects
 						<Icon icon="arrow-right" size="1.2em" />
 					</CallToAction>
 				</div>
@@ -78,23 +72,36 @@ const projects = (await getCollection('work'))
 
 			<section class="section with-background bg-variant">
 				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Mentions</h3>
-					<p>
-						I have been fortunate enough to receive praise for my work in several publications. Take
-						a look below to learn more.
-					</p>
+					<h3>Latest Posts</h3>
+					<p>디자인과 개발에 대한 생각을 공유합니다.</p>
 				</header>
 
 				<div class="gallery">
 					<Grid variant="small">
 						{
-							['Medium', 'BuzzFeed', 'The Next Web', 'awwwards.', 'TechCrunch'].map((brand) => (
+							posts.map((post) => (
 								<li class="mention-card">
-									<p>{brand}</p>
+									<a href={`/blog/${post.id}/`} class="post-link">
+										<span class="post-date">
+											{post.data.publishDate.toLocaleDateString('ko-KR', {
+												month: 'short',
+												day: 'numeric',
+											})}
+										</span>
+										<h4>{post.data.title}</h4>
+										<p>{post.data.description.slice(0, 100)}...</p>
+									</a>
 								</li>
 							))
 						}
 					</Grid>
+				</div>
+
+				<div class="cta">
+					<CallToAction href="/blog/">
+						View All Posts
+						<Icon icon="arrow-right" size="1.2em" />
+					</CallToAction>
 				</div>
 			</section>
 		</main>
@@ -144,8 +151,6 @@ const projects = (await getCollection('work'))
 		}
 	}
 
-	/* ====================================================== */
-
 	.section {
 		display: grid;
 		gap: 2rem;
@@ -156,7 +161,7 @@ const projects = (await getCollection('work'))
 	}
 
 	.with-background::before {
-		--hero-bg: var(--bg-image-subtle-2);
+		--hero-bg: var(--bg-tertiary);
 
 		content: '';
 		position: absolute;
@@ -166,17 +171,12 @@ const projects = (await getCollection('work'))
 		aspect-ratio: calc(2.25 / var(--bg-scale));
 		top: 0;
 		transform: translateY(-75%) translateX(-50%);
-		background:
-			url('/assets/backgrounds/noise.png') top center/220px repeat,
-			var(--hero-bg) center center / var(--bg-gradient-size) no-repeat,
-			var(--gray-999);
-		background-blend-mode: overlay, normal, normal, normal;
-		mix-blend-mode: var(--bg-blend-mode);
+		background: var(--hero-bg);
 		z-index: -1;
 	}
 
 	.with-background.bg-variant::before {
-		--hero-bg: var(--bg-image-subtle-1);
+		--hero-bg: var(--bg-secondary);
 	}
 
 	.section-header {
@@ -184,11 +184,12 @@ const projects = (await getCollection('work'))
 		text-align: center;
 		max-width: 50ch;
 		font-size: var(--text-md);
-		color: var(--gray-300);
+		color: var(--text-secondary);
 	}
 
 	.section-header h3 {
 		font-size: var(--text-2xl);
+		color: var(--text-primary);
 	}
 
 	@media (min-width: 50em) {
@@ -225,25 +226,57 @@ const projects = (await getCollection('work'))
 		}
 	}
 
-	/* ====================================================== */
-
 	.mention-card {
 		display: flex;
-		height: 7rem;
-		justify-content: center;
-		align-items: center;
-		text-align: center;
-		border: 1px solid var(--gray-800);
+		height: auto;
+		justify-content: flex-start;
+		align-items: flex-start;
+		text-align: left;
+		border: 1px solid var(--border-color);
 		border-radius: 1.5rem;
-		color: var(--gray-300);
-		background: var(--gradient-subtle);
+		color: var(--text-secondary);
+		background: var(--bg-secondary);
 		box-shadow: var(--shadow-sm);
+		transition: all var(--theme-transition);
+	}
+
+	.mention-card:hover {
+		box-shadow: var(--shadow-md);
+		transform: translateY(-4px);
+		border-color: var(--matcha-primary);
+	}
+
+	.post-link {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 1.5rem;
+		text-decoration: none;
+		color: inherit;
+		width: 100%;
+	}
+
+	.post-date {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	.post-link h4 {
+		font-size: var(--text-lg);
+		color: var(--text-primary);
+		margin: 0;
+	}
+
+	.post-link p {
+		font-size: var(--text-sm);
+		color: var(--text-secondary);
+		line-height: 1.5;
+		margin: 0;
 	}
 
 	@media (min-width: 50em) {
 		.mention-card {
 			border-radius: 1.5rem;
-			height: 9.5rem;
 		}
 	}
 </style>

@@ -6,18 +6,16 @@ import ThemeToggle from './ThemeToggle.astro';
 /** Main menu items */
 const textLinks: { label: string; href: string }[] = [
 	{ label: 'Home', href: '/' },
-	{ label: 'Work', href: '/work/' },
+	{ label: 'Portfolio', href: '/work/' },
+	{ label: 'Blog', href: '/blog/' },
 	{ label: 'About', href: '/about/' },
 ];
 
-/** Icon links to social media — edit these with links to your profiles! */
+/** Icon links to social media */
 const iconLinks: { label: string; href: string; icon: keyof typeof iconPaths }[] = [
-	{ label: 'Twitter', href: 'https://twitter.com/me', icon: 'twitter-logo' },
-	{ label: 'Twitch', href: 'https://twitch.tv/me', icon: 'twitch-logo' },
-	{ label: 'GitHub', href: 'https://github.com/me', icon: 'github-logo' },
-	{ label: 'CodePen', href: 'https://codepen.io/me', icon: 'codepen-logo' },
-	{ label: 'dribbble', href: 'https://dribbble.com/me', icon: 'dribbble-logo' },
-	{ label: 'YouTube', href: 'https://www.youtube.com/@me/', icon: 'youtube-logo' },
+	{ label: 'GitHub', href: 'https://github.com/', icon: 'github-logo' },
+	{ label: 'LinkedIn', href: 'https://linkedin.com/', icon: 'linkedin-logo' },
+	{ label: 'Behance', href: 'https://behance.net/', icon: 'dribbble-logo' },
 ];
 
 /** Test if a link is pointing to the current page. */
@@ -32,8 +30,8 @@ const isCurrentPage = (href: string) => {
 <nav>
 	<div class="menu-header">
 		<a href="/" class="site-title">
-			<Icon icon="terminal-window" color="var(--accent-regular)" size="1.6em" gradient />
-			Jeanine White
+			<Icon icon="leaf" color="var(--matcha-primary)" size="1.6em" />
+			Portfolio
 		</a>
 		<menu-button>
 			<template>
@@ -160,8 +158,9 @@ const isCurrentPage = (href: string) => {
 		gap: 0.5rem;
 		align-items: center;
 		line-height: 1.1;
-		color: var(--gray-0);
+		color: var(--text-primary);
 		text-decoration: none;
+		font-weight: 600;
 	}
 
 	.menu-button {
@@ -171,16 +170,15 @@ const isCurrentPage = (href: string) => {
 		border-radius: 999rem;
 		padding: 0.5rem;
 		font-size: 1.5rem;
-		color: var(--gray-300);
-		background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
+		color: var(--text-secondary);
+		background: var(--bg-secondary);
 		box-shadow: var(--shadow-md);
+		border: 1px solid var(--border-color);
 	}
 
 	.menu-button[aria-expanded='true'] {
-		color: var(--gray-0);
-		background:
-			linear-gradient(180deg, var(--gray-600), transparent),
-			radial-gradient(var(--gray-900), var(--gray-800) 150%);
+		color: var(--matcha-primary);
+		background: var(--bg-tertiary);
 	}
 
 	.menu-button[hidden] {
@@ -211,18 +209,20 @@ const isCurrentPage = (href: string) => {
 		line-height: 1.2;
 		list-style: none;
 		padding: 2rem;
-		background-color: var(--gray-999);
-		border-bottom: 1px solid var(--gray-800);
+		background-color: var(--bg-secondary);
+		border-bottom: 1px solid var(--border-color);
 	}
 
 	.link {
 		display: inline-block;
-		color: var(--gray-300);
+		color: var(--text-secondary);
 		text-decoration: none;
+		transition: color var(--theme-transition);
 	}
 
 	.link[aria-current] {
-		color: var(--gray-0);
+		color: var(--matcha-primary);
+		font-weight: 600;
 	}
 
 	.menu-footer {
@@ -233,7 +233,7 @@ const isCurrentPage = (href: string) => {
 		justify-content: space-between;
 		gap: 0.75rem;
 		padding: 1.5rem 2rem 1.5rem 1.5rem;
-		background-color: var(--gray-999);
+		background-color: var(--bg-secondary);
 		border-radius: 0 0 0.75rem 0.75rem;
 		box-shadow: var(--shadow-lg);
 	}
@@ -249,13 +249,13 @@ const isCurrentPage = (href: string) => {
 		display: flex;
 		padding: var(--icon-padding);
 		text-decoration: none;
-		color: var(--accent-dark);
+		color: var(--text-muted);
 		transition: color var(--theme-transition);
 	}
 
 	.social:hover,
 	.social:focus {
-		color: var(--accent-text-over);
+		color: var(--matcha-primary);
 	}
 
 	.theme-toggle {
@@ -290,9 +290,9 @@ const isCurrentPage = (href: string) => {
 			flex-direction: row;
 			font-size: var(--text-sm);
 			border-radius: 999rem;
-			border: 0;
+			border: 1px solid var(--border-color);
 			padding: 0.5rem 0.5625rem;
-			background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
+			background: var(--bg-secondary);
 			box-shadow: var(--shadow-md);
 		}
 
@@ -300,9 +300,15 @@ const isCurrentPage = (href: string) => {
 			position: absolute;
 			inset: -1px;
 			content: '';
-			background: var(--gradient-stroke);
+			background: var(--gradient-matcha);
 			border-radius: 999rem;
 			z-index: -1;
+			opacity: 0;
+			transition: opacity var(--theme-transition);
+		}
+
+		.nav-items:hover::before {
+			opacity: 0.1;
 		}
 
 		.link {
@@ -315,13 +321,13 @@ const isCurrentPage = (href: string) => {
 
 		.link:hover,
 		.link:focus {
-			color: var(--gray-100);
-			background-color: var(--accent-subtle-overlay);
+			color: var(--matcha-primary);
+			background-color: var(--bg-tertiary);
 		}
 
 		.link[aria-current='page'] {
-			color: var(--accent-text-over);
-			background-color: var(--accent-regular);
+			color: var(--text-inverse);
+			background-color: var(--matcha-primary);
 		}
 
 		.menu-footer {
